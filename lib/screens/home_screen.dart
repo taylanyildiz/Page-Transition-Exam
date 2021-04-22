@@ -76,8 +76,34 @@ Widget _customTransition(Animation animation, Widget child) {
   );
 }
 
+Widget _customTransition2(Animation animation, Widget child) {
+  var tween = animation.drive(
+      Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.bounceOut)));
+  return AnimatedBuilder(
+    animation: animation,
+    child: child,
+    builder: (context, child) {
+      return ShaderMask(
+        shaderCallback: (rect) => RadialGradient(
+          radius: tween.value * 2.5,
+          colors: [
+            Colors.white,
+            Colors.white,
+            Colors.transparent,
+            Colors.transparent,
+          ],
+          stops: [0.0, 1.0, 0.0, 0.0],
+          center: FractionalOffset(1.0, 0.0),
+        ).createShader(rect),
+        child: child,
+      );
+    },
+  );
+}
+
 Route _createRoute(index) => PageRouteBuilder(
       transitionDuration: Duration(seconds: 2),
+      reverseTransitionDuration: Duration(seconds: 2),
       pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
         body: Stack(
           children: [
@@ -108,6 +134,9 @@ Route _createRoute(index) => PageRouteBuilder(
           case 3:
             return _customTransition(animation, child);
             break;
+          case 4:
+            return _customTransition2(animation, child);
+            break;
         }
         return null;
       },
@@ -117,7 +146,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int index = 0;
   nextPageClick() => {
         index++,
-        if (index > 3) index = 1,
+        if (index > 4) index = 1,
         Navigator.push(context, _createRoute(index))
       };
 
