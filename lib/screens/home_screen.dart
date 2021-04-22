@@ -17,7 +17,7 @@ TweenAnimationBuilder _tweenAnimation(Widget child) => TweenAnimationBuilder(
       builder: (context, value, child) {
         return ShaderMask(
           shaderCallback: (rect) => RadialGradient(
-            radius: (value as double) * 1.5,
+            radius: (value as double) * 2.0,
             colors: [
               Colors.white,
               Colors.white,
@@ -25,7 +25,7 @@ TweenAnimationBuilder _tweenAnimation(Widget child) => TweenAnimationBuilder(
               Colors.transparent,
             ],
             stops: [0.0, 1.0, 0.0, 0.0],
-            center: FractionalOffset(0.9, 0.5),
+            center: FractionalOffset(0.9, 0.9),
           ).createShader(rect),
           child: child,
         );
