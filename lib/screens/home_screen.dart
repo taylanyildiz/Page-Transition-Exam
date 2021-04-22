@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,7 +34,41 @@ TweenAnimationBuilder _tweenAnimation(Widget child) => TweenAnimationBuilder(
       },
     );
 
-Route _createRoute() => PageRouteBuilder(
+Widget _slideTransition(Animation animation, Widget child) => SlideTransition(
+      position: animation.drive(
+        Tween(
+          begin: Offset(1.0, 0.0),
+          end: Offset.zero,
+        ).chain(
+          CurveTween(
+            curve: Curves.elasticOut,
+          ),
+        ),
+      ),
+      child: child,
+    );
+
+Widget _customTransition(Animation animation, Widget child) {
+  var scaleAnim = animation.drive(
+      Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeInCirc)));
+  var angleAnim = animation.drive(
+      Tween(begin: 0.0, end: pi).chain(CurveTween(curve: Curves.easeInCirc)));
+  return AnimatedBuilder(
+    animation: animation,
+    builder: (context, child) {
+      return Transform.rotate(
+        angle: angleAnim.value,
+        child: child,
+      );
+    },
+    child: Transform.scale(
+      scale: scaleAnim.value,
+      child: child,
+    ),
+  );
+}
+
+Route _createRoute(index) => PageRouteBuilder(
       transitionDuration: Duration(seconds: 2),
       pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
         body: Stack(
@@ -54,25 +90,28 @@ Route _createRoute() => PageRouteBuilder(
         ),
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        // return SlideTransition(
-        //   position: animation.drive(
-        //     Tween(
-        //       begin: Offset(0, 1.0),
-        //       end: Offset.zero,
-        //     ).chain(
-        //       CurveTween(
-        //         curve: Curves.elasticOut,
-        //       ),
-        //     ),
-        //   ),
-        //   child: child,
-        // );
-        return _tweenAnimation(child);
+        switch (index) {
+          case 1:
+            return _tweenAnimation(child);
+            break;
+          case 2:
+            return _slideTransition(animation, child);
+            break;
+          case 3:
+            return _customTransition(animation, child);
+            break;
+        }
+        return null;
       },
     );
 
 class _HomeScreenState extends State<HomeScreen> {
-  nextPageClick() => Navigator.push(context, _createRoute());
+  int index = 0;
+  nextPageClick() => {
+        index++,
+        if (index > 3) index = 1,
+        Navigator.push(context, _createRoute(index))
+      };
 
   @override
   Widget build(BuildContext context) {
