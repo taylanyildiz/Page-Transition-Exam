@@ -10,6 +10,28 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
+TweenAnimationBuilder _tweenAnimation(Widget child) => TweenAnimationBuilder(
+      child: child,
+      tween: Tween(begin: 0.0, end: 1.0),
+      duration: Duration(seconds: 1),
+      builder: (context, value, child) {
+        return ShaderMask(
+          shaderCallback: (rect) => RadialGradient(
+            radius: (value as double) * 1.5,
+            colors: [
+              Colors.white,
+              Colors.white,
+              Colors.transparent,
+              Colors.transparent,
+            ],
+            stops: [0.0, 1.0, 0.0, 0.0],
+            center: FractionalOffset(0.9, 0.5),
+          ).createShader(rect),
+          child: child,
+        );
+      },
+    );
+
 Route _createRoute() => PageRouteBuilder(
       transitionDuration: Duration(seconds: 2),
       pageBuilder: (context, animation, secondaryAnimation) => Scaffold(
@@ -32,19 +54,20 @@ Route _createRoute() => PageRouteBuilder(
         ),
       ),
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        return SlideTransition(
-          position: animation.drive(
-            Tween(
-              begin: Offset(0, 1.0),
-              end: Offset.zero,
-            ).chain(
-              CurveTween(
-                curve: Curves.elasticOut,
-              ),
-            ),
-          ),
-          child: child,
-        );
+        // return SlideTransition(
+        //   position: animation.drive(
+        //     Tween(
+        //       begin: Offset(0, 1.0),
+        //       end: Offset.zero,
+        //     ).chain(
+        //       CurveTween(
+        //         curve: Curves.elasticOut,
+        //       ),
+        //     ),
+        //   ),
+        //   child: child,
+        // );
+        return _tweenAnimation(child);
       },
     );
 
