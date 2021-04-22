@@ -52,7 +52,15 @@ Widget _customTransition(Animation animation, Widget child) {
   var scaleAnim = animation.drive(
       Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.easeInCirc)));
   var angleAnim = animation.drive(
-      Tween(begin: 0.0, end: pi).chain(CurveTween(curve: Curves.easeInCirc)));
+    Tween(
+      begin: 0.0,
+      end: 2 * pi,
+    ).chain(
+      CurveTween(
+        curve: Curves.easeInCirc,
+      ),
+    ),
+  );
   return AnimatedBuilder(
     animation: animation,
     builder: (context, child) {
